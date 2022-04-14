@@ -84,4 +84,6 @@ def to_no_url(text):
     return url_pattern.sub(r'', text)
 
 def to_clean_tokens(text):
-    pass
+    tokens = to_tokens(to_no_whitespace(to_lowercase(text)))
+    return to_no_tags(to_stemmed(to_lemmatized(to_no_punctuation(to_no_stopwords(to_correct_spelling(tokens))))))
+
