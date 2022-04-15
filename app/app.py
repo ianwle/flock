@@ -17,7 +17,7 @@ if __name__ == '__main__':
 	cur = conn.cursor()
 	
 	# Execute a query
-	cur.execute("""SELECT * FROM public.\"Events_temp\"""")
+	cur.execute("""SELECT * FROM public.\"Events\"""")
 
 	# Retrieve query results
 	records = cur.fetchall()
