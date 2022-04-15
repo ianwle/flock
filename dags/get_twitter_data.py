@@ -11,8 +11,9 @@ from airflow.utils.trigger_rule import TriggerRule
 
 import csv
 import sys
+import extractor
 
-# import extractor
+import extractor
 
 @dag(
     schedule_interval="0 0 * * *",
@@ -20,17 +21,17 @@ import sys
     catchup=False,
     dagrun_timeout=datetime.timedelta(minutes=60),
 )
-def get_usgs_feed():
+def get_twitter_feed():
     @task
     def get_data():
-
+        data_path = "/opt/airflow/dags/files/usgs_feed.csv"
 
         feed = extractor.extract_usgs_feed_all()
         processed_feed = []
 
         for entry in feed.entries:
             try:
-                processed_feed.append(extract_usgs_details(entry))
+                processed_feed.append(extractor.extract_usgs_details(entry))
             except Exception as e:
                 # Error if return type is None, remove.
                 continue
@@ -80,7 +81,7 @@ def get_usgs_feed():
     end_process_dummy = DummyOperator(task_id="end_process_dummy")
        
     def _clear_data():
-        print("Clearing data in temporary Events table.")
+        print("LOG: Clearing data in temporary Events table.")
         try:
             postgres_hook = PostgresHook(postgres_conn_id="LOCAL")
             conn = postgres_hook.get_conn()
