@@ -13,7 +13,7 @@ import csv
 import sys
 import extractor
 
-import extractor
+MAGNITUDE_LIMIT = 5
 
 @dag(
     schedule_interval="0 0 * * *",
@@ -89,12 +89,19 @@ def get_usgs_feed():
             records = cur.fetchall()
 
             for record in records:
-                print(record)
+                if record[-3] >= MAGNITUDE_LIMIT:
+                    print(record)
 
 
             return 0
         except Exception as e:
             return 1
+
+    get_twitter_data = PythonOperator(
+        task_id="get_twitter_data",
+        python_callable=_get_twitter_data,
+        trigger_rule=TriggerRule.ONE_SUCCESS
+    )
 
     def _get_news_data():
         pass
@@ -136,6 +143,6 @@ def get_usgs_feed():
         )
 
 
-    get_data() >> branch_on_check >> [merge_data, end_process_dummy] >> clear_data
+    get_data() >> branch_on_check >> [merge_data, end_process_dummy] >> get_twitter_data >> clear_data
 
 dag = get_usgs_feed()

@@ -19,16 +19,16 @@ nltk.download('omw-1.4')
 
 ENGLISH_STOPWORDS = stopwords.words('english')
 
-def to_lowercase(text: str) -> str:
+def to_lowercase(text):
     return str(text).lower()
 
-def to_no_whitespace(text: str) -> str:
+def to_no_whitespace(text):
     return " ".join(text.split())
 
-def to_tokens(text: str) -> list[str]:
+def to_tokens(text):
     return word_tokenize(text)
 
-def to_correct_spelling(text: list[str]) -> list[str]:
+def to_correct_spelling(text):
     result = []
     spell = spellchecker.SpellChecker()
     
@@ -38,19 +38,19 @@ def to_correct_spelling(text: list[str]) -> list[str]:
         
     return result
 
-def to_no_stopwords(text: str) -> list[str]:
+def to_no_stopwords(text):
     result = []
     for token in text:
         if token not in ENGLISH_STOPWORDS:
             result.append(token)
     return result
 
-def to_no_punctuation(text: list[str]) -> list[str]:
+def to_no_punctuation(text):
     tokenizer = RegexpTokenizer(r"\w+")
     result = tokenizer.tokenize(' '.join(text))
     return result
 
-def to_lemmatized(text: list[str]) -> list[str]:
+def to_lemmatized(text):
     result = []
     
     wordnet = WordNetLemmatizer()
