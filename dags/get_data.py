@@ -21,7 +21,7 @@ import extractor
     catchup=False,
     dagrun_timeout=datetime.timedelta(minutes=60),
 )
-def get_twitter_feed():
+def get_usgs_feed():
     @task
     def get_data():
         data_path = "/opt/airflow/dags/files/usgs_feed.csv"
@@ -79,18 +79,24 @@ def get_twitter_feed():
     )
     
     end_process_dummy = DummyOperator(task_id="end_process_dummy")
+
+    def _get_twitter_data():
+        pass
+
+    def _get_news_data():
+        pass
        
     def _clear_data():
         print("LOG: Clearing data in temporary Events table.")
-        try:
-            postgres_hook = PostgresHook(postgres_conn_id="LOCAL")
-            conn = postgres_hook.get_conn()
-            cur = conn.cursor()
-            cur.execute("DELETE FROM \"Events_temp\"")
-            conn.commit()
-            return 0
-        except Exception as e:
-            return 1
+        # try:
+        #     postgres_hook = PostgresHook(postgres_conn_id="LOCAL")
+        #     conn = postgres_hook.get_conn()
+        #     cur = conn.cursor()
+        #     cur.execute("DELETE FROM \"Events_temp\"")
+        #     conn.commit()
+        #     return 0
+        # except Exception as e:
+        #     return 1
 
     clear_data = PythonOperator(
         task_id="clear_data",

@@ -3,7 +3,7 @@ import pandas as pd
 import nltk
 
 from nltk import word_tokenize
-from spellchecker import SpellChecker
+from spellchecker import spellchecker
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem import WordNetLemmatizer
@@ -19,18 +19,18 @@ nltk.download('omw-1.4')
 
 ENGLISH_STOPWORDS = stopwords.words('english')
 
-def to_lowercase(text):
+def to_lowercase(text: str) -> str:
     return str(text).lower()
 
-def to_no_whitespace(text):
+def to_no_whitespace(text: str) -> str:
     return " ".join(text.split())
 
-def to_tokens(text):
+def to_tokens(text: str) -> list[str]:
     return word_tokenize(text)
 
-def to_correct_spelling(text):
+def to_correct_spelling(text: list[str]) -> list[str]:
     result = []
-    spell = SpellChecker()
+    spell = spellchecker.SpellChecker()
     
     for word in text:
         correct_word = spell.correction(word)
@@ -38,19 +38,19 @@ def to_correct_spelling(text):
         
     return result
 
-def to_no_stopwords(text):
+def to_no_stopwords(text: str) -> list[str]:
     result = []
     for token in text:
         if token not in ENGLISH_STOPWORDS:
             result.append(token)
     return result
 
-def to_no_punctuation(text):
+def to_no_punctuation(text: list[str]) -> list[str]:
     tokenizer = RegexpTokenizer(r"\w+")
     result = tokenizer.tokenize(' '.join(text))
     return result
 
-def to_lemmatized(text):
+def to_lemmatized(text: list[str]) -> list[str]:
     result = []
     
     wordnet = WordNetLemmatizer()
@@ -84,6 +84,4 @@ def to_no_url(text):
     return url_pattern.sub(r'', text)
 
 def to_clean_tokens(text):
-    tokens = to_tokens(to_no_whitespace(to_lowercase(text)))
-    return to_no_tags(to_stemmed(to_lemmatized(to_no_punctuation(to_no_stopwords(to_correct_spelling(tokens))))))
-
+    pass

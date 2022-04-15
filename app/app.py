@@ -17,10 +17,11 @@ if __name__ == '__main__':
 	cur = conn.cursor()
 	
 	# Execute a query
-	cur.execute("""SELECT * FROM public.\"Events\"""")
+	cur.execute("""SELECT * FROM public.\"Events_temp\"""")
 
 	# Retrieve query results
 	records = cur.fetchall()
-	print(records)
+	headers = cur.description
+	
 	# app.run(host='0.0.0.0')
 	
