@@ -72,7 +72,7 @@ x-airflow-common:
 
 services:
   web:
-    container_name: flask_server
+    # container_name: flask_server
     build: app 
     ports: 
       - '5000:5000'
@@ -97,7 +97,7 @@ services:
   
   pgadmin4:
     image: dpage/pgadmin4
-    container_name: pgadmin4
+    # container_name: pgadmin4
     ports:
       - 80:80
     environment:

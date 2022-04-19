@@ -9,11 +9,13 @@ from airflow.operators.python_operator import BranchPythonOperator, PythonOperat
 from airflow.operators.dummy import DummyOperator
 from airflow.utils.trigger_rule import TriggerRule
 
+from nlp_methods import *
+
 import csv
 import sys
 import extractor
 
-MAGNITUDE_LIMIT = 5
+MAGNITUDE_LIMIT = 0
 
 @dag(
     schedule_interval="0 0 * * *",
@@ -78,9 +80,9 @@ def get_usgs_feed():
         python_callable=_merge_data
     )
     
-    end_process_dummy = DummyOperator(task_id="end_process_dummy")
+    end_process_dummy = DummyOperator(task_id="end_process_dummy")     
 
-    def _get_twitter_data():
+    def _get_twitter_and_news():
         try:
             postgres_hook = PostgresHook(postgres_conn_id="LOCAL")
             conn = postgres_hook.get_conn()
@@ -89,17 +91,19 @@ def get_usgs_feed():
             records = cur.fetchall()
 
             for record in records:
-                if record[-3] >= MAGNITUDE_LIMIT:
+                print(record)
+                # access the magnitude from the tuple data type
+                if record[-3] >= MAGNITUDE_LIMIT and record[-4] == "United States":
+                    # launch news search
+                    # launch twitter search
                     print(record)
-
-
             return 0
         except Exception as e:
             return 1
 
-    get_twitter_data = PythonOperator(
-        task_id="get_twitter_data",
-        python_callable=_get_twitter_data,
+    get_twitter_and_news = PythonOperator(
+        task_id="get_twitter_and_news",
+        python_callable=_get_twitter_and_news,
         trigger_rule=TriggerRule.ONE_SUCCESS
     )
 
@@ -143,6 +147,6 @@ def get_usgs_feed():
         )
 
 
-    get_data() >> branch_on_check >> [merge_data, end_process_dummy] >> get_twitter_data >> clear_data
+    get_data() >> branch_on_check >> [merge_data, end_process_dummy] >> get_twitter_and_news >> clear_data
 
 dag = get_usgs_feed()
